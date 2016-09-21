@@ -115,8 +115,8 @@ EOF
    chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_CACHE_DIR}
 
    SWIFT_USER_HOME="/home/${SWIFT_USER}"
-   SWIFT_USER_BIN="${SWIFT_USER_HOME}/bin"
-   mkdir -p ${SWIFT_USER_BIN}
+   SWIFT_USER_BIN="${SWIFT_USEiR_HOME}/.local/bin"
+   #mkdir -p ${SWIFT_USER_BIN}
 
    SWIFT_LOGIN_CONFIG="${SWIFT_USER_HOME}/.bashrc"
 
@@ -151,12 +151,20 @@ EOF
 
    echo "export PYTHONPATH=${SWIFT_USER_HOME}/swift" >> ${SWIFT_LOGIN_CONFIG}
 
+# ************Updating config files************
    cp ${SWIFT_REPO_DIR}/test/sample.conf ${SWIFT_CONFIG_DIR}/test.conf
-
+   cp ${SWIFT_REPO_DIR}/etc/memcache.conf-sample ${SWIFT_CONFIG_DIR}/memcache.conf
+   cp ${SWIFT_REPO_DIR}/etc/swift-rsyslog.conf-sample ${SWIFT_CONFIG_DIR}/swift-rsyslog.conf
+   
    cd ${SWIFT_REPO_DIR}/doc/saio/swift; cp -r * ${SWIFT_CONFIG_DIR}
    cd ${SWIFT_CONFIG_DIR}
 
-# ************Updating config files************
+   #updating memcache config
+   sed -i 's/^\(#\)\( memcache_servers =.*:\)\(.*\)/echo "\2$((\3+'"${x}"'))"/ge' ${SWIFT_CONFIG_DIR}/memcache.conf
+   #updating rsyslog parameters in its config
+   sed -i 's/^\(#\)\(local\.\*.*\)/\2/g' ${SWIFT_CONFIG_DIR}/swift-rsyslog.conf 
+   sed -i 's/\/var\/log\/swift/\/var\/log\/'${SWIFT_USER}'/g' ${SWIFT_CONFIG_DIR}/swift-rsyslog.conf
+
    #setting ports in configs
    PORT_INCREMENT=$(expr 100 \* ${CLUSTER_COUNT})
    find . -type f -exec sed -i 's/^bind_port = \(6[0-9]*\)/echo "bind_port = $((\1+'"${PORT_INCREMENT}"'))"/ge' {} \;
@@ -181,31 +189,36 @@ EOF
    chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_CONFIG_DIR}
    find ${SWIFT_CONFIG_DIR}/ -name \*.conf | xargs sed -i "s/<your-user-name>/${SWIFT_USER}/"
 
-# ********Updating logging**********
-   cp ${SWIFT_REPO_DIR}/doc/saio/rsyslog.d/10-swift.conf /etc/rsyslog.d/
-   sed -i '2 s/^#//' /etc/rsyslog.d/10-swift.conf
+# TODO********Updating logging**********
+#   cp ${SWIFT_REPO_DIR}/doc/saio/rsyslog.d/10-swift.conf /etc/rsyslog.d/
+#   sed -i '2 s/^#//' /etc/rsyslog.d/10-swift.conf
 
+   cd ${SWIFT_CLI_REPO_DIR}
+   yes | pip install -r requirements.txt
+   yes | pip install -r test-requirements.txt
+   yes | pip install -U pip tox pbr virtualenv setuptools
+   apt-get install -y  libpython3.4-dev
+   python setup.py install --user
+   chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_CLI_REPO_DIR}
 
+   cd ${SWIFT_REPO_DIR}
+   yes | pip install -r requirements.txt
+   yes | pip install -r test-requirements.txt
+   yes | pip install PyECLib
+   python setup.py install --user
+   apt-get remove -y python-six
+   yes | pip install -U six
+   chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_REPO_DIR}
+
+# *********Updating Scripts in bin dir****************
    cd ${SWIFT_REPO_DIR}/doc/saio/bin; cp * ${SWIFT_USER_BIN};
    chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_USER_BIN}; cd -
 
-#TODO: can this could be made better? (handle other paths)
-sed -i "/find \/var\/log\/swift/d" ${SWIFT_USER_BIN}/resetswift
-sed -i 's/\/dev\/sdb1/\/srv\/swift-disk/g' ${SWIFT_USER_BIN}/resetswift
+   sed -i "/find \/var\/log\/swift/d" ${SWIFT_USER_BIN}/resetswift
+   sed -i 's/\/dev\/sdb1/\/srv\/swift-'${i}'-disk/g' ${SWIFT_USER_BIN}/resetswift
+   sed -i 's/\/mnt\/sdb1/\/mnt\/swift-'${i}'/g' ${SWIFT_USER_BIN}/resetswift
+   sed -i 's/\/var\/cache\/swift/\/var\/cache\/swift-'${i}'' ${SWIFT_USER_BIN}/resetswift
+   for x in {1..4} do
+      sed -i 's/\/srv\/'${x}'\/node/\/srv\/swift-'${i}'-'${x}'\/node/g' ${SWIFT_USER_BIN}/resetswift
+   done
 
-cd ${SWIFT_CLI_REPO_DIR}
-yes | pip install -r requirements.txt
-yes | pip install -r test-requirements.txt
-yes | pip install -U pip tox pbr virtualenv setuptools
-apt-get install -y  libpython3.4-dev
-python setup.py develop
-sudo chown -R ${SWIFT_USER}:${SWIFT_USER} ${SWIFT_CLI_REPO_DIR}
-
-cd ${SWIFT_REPO_DIR}
-yes | pip install -r requirements.txt
-yes | pip install -r test-requirements.txt
-yes | pip install PyECLib
-python setup.py develop
-apt-get remove -y python-six
-yes | pip install -U six
-sudo chown -R ${SWIFT_USER}:${SWIFT_USER} ${SWIFT_REPO_DIR}

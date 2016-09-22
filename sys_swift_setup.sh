@@ -136,7 +136,7 @@ EOF
    if [ -d ${SWIFT_USER_HOME}/swift ]; then
       su - ${SWIFT_USER} -c 'cd swift && git pull'
    else
-      su - ${SWIFT_USER} -c 'git clone https://github.com/openstack/swift'
+      su - ${SWIFT_USER} -c 'git clone https://github.com/ntata/swift.git'
    fi
 
    if [ -d ${SWIFT_USER_HOME}/python-swiftclient ]; then
@@ -219,6 +219,7 @@ EOF
    sed -i 's/\/dev\/sdb1/\/srv\/swift-'${i}'-disk/g' ${SWIFT_USER_BIN}/resetswift
    sed -i 's/\/mnt\/sdb1/\/mnt\/swift-'${i}'/g' ${SWIFT_USER_BIN}/resetswift
    sed -i 's/\/var\/cache\/swift/\/var\/cache\/swift-'${i}'' ${SWIFT_USER_BIN}/resetswift
+   sed -i 's/\(6[0-9][0-9][0-9]\)/$((\1+'"${PORT_INCREMENT}"'))/g' ${SWIFT_USER_BIN}/remakerings
    for x in {1..4}; do
       sed -i 's/\/srv\/'${x}'\/node/\/srv\/swift-'${i}'-'${x}'\/node/g' ${SWIFT_USER_BIN}/resetswift
    done

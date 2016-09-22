@@ -49,10 +49,18 @@ apt-get install -y python-pastedeploy
 apt-get install -y python-netifaces
 apt-get install -y python-dnspython
 apt-get install -y python-mock
+apt-get install -y  libpython3.4-dev
 
 #ubuntu 14.04 comes with older pip version. We get the latest version here
 wget https://bootstrap.pypa.io/get-pip.py
 python get-pip.py
+
+
+apt-get remove -y python-six
+yes | pip install -U six
+yes | pip install -U pip tox pbr virtualenv setuptools
+yes | pip install PyECLib
+
 
 #wget https://github.com/ntata/swift/blob/master/requirements.txt
 #https://github.com/ntata/swift/blob/master/test-requirements.txt

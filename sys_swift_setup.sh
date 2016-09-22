@@ -197,32 +197,31 @@ EOF
 #   cp ${SWIFT_REPO_DIR}/doc/saio/rsyslog.d/10-swift.conf /etc/rsyslog.d/
 #   sed -i '2 s/^#//' /etc/rsyslog.d/10-swift.conf
 
-   su - ${SWIFT_USER} -c
-   su - ${SWIFT_USER} -c "cd ${SWIFT_CLI_REPO_DIR} && yes | pip install -U pip tox pbr virtualenv setuptools"
-   su - ${SWIFT_USER} -c "cd ${SWIFT_CLI_REPO_DIR} && apt-get install -y  libpython3.4-dev"
+   if ${CLUSTER_COUNT}==1; then
+     cd ${SWIFT_REPO_DIR}
+     yes | pip install -r requirements.txt
+     yes | pip install -r test-requirements.txt
+   fi
+
+   cd ${SWIFT_CLI_REPO_DIR}
    su - ${SWIFT_USER} -c "cd ${SWIFT_CLI_REPO_DIR} && python setup.py install --user"
-   chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_CLI_REPO_DIR}
 
-
-   su - ${SWIFT_USER} -c "cd ${SWIFT_REPO_DIR} && yes | pip install -r requirements.txt"
-   su - ${SWIFT_USER} -c "cd ${SWIFT_REPO_DIR} && yes | pip install -r test-requirements.txt"
-   su - ${SWIFT_USER} -c "cd ${SWIFT_REPO_DIR} && yes | pip install PyECLib"
+   cd ${SWIFT_REPO_DIR}
    su - ${SWIFT_USER} -c "cd ${SWIFT_REPO_DIR} && python setup.py install --user"
-   su - ${SWIFT_USER} -c "cd ${SWIFT_REPO_DIR} && apt-get remove -y python-six"
-   su - ${SWIFT_USER} -c "cd ${SWIFT_REPO_DIR} && yes | pip install -U six"
+
+   chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_CLI_REPO_DIR}
    chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_REPO_DIR}
 
    cd ${SWIFT_REPO_DIR}/doc/saio/bin; cp * ${SWIFT_USER_BIN};
    chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_USER_BIN}; cd -
-
+   
    sed -i "/find \/var\/log\/swift/d" ${SWIFT_USER_BIN}/resetswift
    sed -i 's/\/dev\/sdb1/\/srv\/swift-'${i}'-disk/g' ${SWIFT_USER_BIN}/resetswift
    sed -i 's/\/mnt\/sdb1/\/mnt\/swift-'${i}'/g' ${SWIFT_USER_BIN}/resetswift
    sed -i 's/\/var\/cache\/swift/\/var\/cache\/swift-'${i}'' ${SWIFT_USER_BIN}/resetswift
    sed -i 's/^\(swift-ring-builder .*\)\([0-9]:\)\(6[0-9][0-9][0-9]\)\(.*\)/echo "\1\2$((\3+'"${PORT_INCREMENT}"'))\4"/ge' ${SWIFT_USER_BIN}/remakerings
-for x in {1..4}; do
+   for x in {1..4}; do
       sed -i 's/\/srv\/'${x}'\/node/\/srv\/swift-'${i}'-'${x}'\/node/g' ${SWIFT_USER_BIN}/resetswift
    done
-EOF
 done
 

@@ -34,8 +34,12 @@ for i in `more clusters.txt`; do
    SWIFT_USER=swift-${i}
 
    cd ${SWIFT_HOME_DIR}
-   echo  'export ST_AUTH=http://127.0.0.1:8080/auth/v1.0
+   PROXY_PORT=$(find /etc/${SWIFT_USER} -name "proxy-server.conf" -exec sed -n 's/bind_port = \([0-9]*\)/\1/p' {} \;)
+   echo  "export ST_AUTH=http://127.0.0.1:${PROXY_PORT}/auth/v1.0
    export ST_USER=test:tester
-   export ST_KEY=testing' >openrc
+   export ST_KEY=testing
+   export SWIFT_ROOT=/etc/${SWIFT_USER}
+   export SWIFT_RUN_DIR=/var/run/${SWIFT_USER}
+   export SWIFT_XPROFILE_DIR=/tmp/log/${SWIFT_USER}" >openrc
    chown ${SWIFT_USER}:${SWIFT_USER_GROUP} openrc
 done

@@ -94,13 +94,12 @@ EOF
       SWIFT_DISK_DIR="${SWIFT_DISK_BASE_DIR}/swift-${i}-${x}"
       SWIFT_MOUNT_DIR="${SWIFT_MOUNT_POINT_DIR}/${x}"
       SWIFT_CACHE_DIR="${SWIFT_CACHE_BASE_DIR}/swift-${i}-${x}"
-
+      
       mkdir -p "${SWIFT_CACHE_DIR}"
  
       ln -s ${SWIFT_MOUNT_DIR} ${SWIFT_DISK_DIR}
-   #   used by swift recon to dump the stats to cache
+      
       chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_CACHE_DIR}
-      chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_DISK_DIR} 
    done
 
    mkdir -p ${SWIFT_DISK_BASE_DIR}/swift-${i}-1/node/sdb1
@@ -113,6 +112,7 @@ EOF
    mkdir -p ${SWIFT_DISK_BASE_DIR}/swift-${i}-3/node/sdb7
    mkdir -p ${SWIFT_DISK_BASE_DIR}/swift-${i}-4/node/sdb8
    
+   chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_DISK_BASE_DIR}/swift-${i}* 
    chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_MOUNT_POINT_DIR}
 
 

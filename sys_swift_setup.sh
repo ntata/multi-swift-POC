@@ -168,7 +168,7 @@ EOF
    sed -i 's/^\(-p \)\([0-9]*\)/echo "\1$((\2+'"${CLUSTER_NUMBER}"'))"/ge' /etc/memcached_${SWIFT_USER}.conf
    #updating rsyslog parameters in its config
    sed -i 's/^\(#\)\(local\.\*.*\)/\2/g' ${SWIFT_CONFIG_DIR}/swift-rsyslog.conf 
-   sed -i 's/\/var\/log\/swift/\/var\/log\/'${SWIFT_USER}'/g' ${SWIFT_CONFIG_DIR}/swift-rsyslog.conf
+   sed -i "s/\/var\/log\/swift/\/var\/log\/${SWIFT_USER}/g" ${SWIFT_CONFIG_DIR}/swift-rsyslog.conf
 
    #setting ports in configs
    PORT_INCREMENT=$(expr 100 \* ${CLUSTER_COUNT})

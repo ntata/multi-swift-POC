@@ -60,14 +60,16 @@ for i in `more clusters.txt`; do
    SWIFT_CONFIG_DIR="/etc/swift-${i}"
    SWIFT_RUN_DIR="/var/run/swift-${i}"
    SWIFT_PROFILE_LOG_DIR="/tmp/log/swift-${i}/profile"
-
+   SWIFT_LOG_DIR="/var/log/swift-${i}"
    mkdir -p "${SWIFT_CONFIG_DIR}"
    mkdir -p "${SWIFT_DISK_BASE_DIR}"
    mkdir -p "${SWIFT_RUN_DIR}"
    mkdir -p "${SWIFT_PROFILE_LOG_DIR}"
+   mkdir -p "${SWIFT_LOG_DIR}"
 
    chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_RUN_DIR}
    chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_PROFILE_LOG_DIR}
+   chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_LOG_DIR}
 
    SWIFT_DISK="${SWIFT_DISK_BASE_DIR}/swift-${i}-disk"
    truncate -s "${SWIFT_DISK_SIZE_GB}GB" "${SWIFT_DISK}"

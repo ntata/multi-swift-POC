@@ -155,14 +155,16 @@ EOF
 
 # ************Updating config files************
    cp ${SWIFT_REPO_DIR}/test/sample.conf ${SWIFT_CONFIG_DIR}/test.conf
-   cp ${SWIFT_REPO_DIR}/etc/memcache.conf-sample ${SWIFT_CONFIG_DIR}/memcache.conf
+   #cp ${SWIFT_REPO_DIR}/etc/memcache.conf-sample ${SWIFT_CONFIG_DIR}/memcache.conf
+   cp /etc/memcached.conf /etc/memcached_${SWIFT_USER}.conf
    cp ${SWIFT_REPO_DIR}/etc/swift-rsyslog.conf-sample ${SWIFT_CONFIG_DIR}/swift-rsyslog.conf
    
    cd ${SWIFT_REPO_DIR}/doc/saio/swift; cp -r * ${SWIFT_CONFIG_DIR}
    cd ${SWIFT_CONFIG_DIR}
 
    #updating memcache config
-   sed -i 's/^\(#\)\( memcache_servers =.*:\)\(.*\)/echo "\2$((\3+'"${CLUSTER_NUMBER}"'))"/ge' ${SWIFT_CONFIG_DIR}/memcache.conf
+   #sed -i 's/^\(#\)\( memcache_servers =.*:\)\([0-9]*\)/echo "\2$((\3+'"${CLUSTER_NUMBER}"'))"/ge' ${SWIFTCONFIG_DIR}/memcache.conf
+   sed -i 's/^\(-p \)\([0-9]*\)/echo "\1$((\2+'"${CLUSTER_NUMBER}"'))"/ge' /etc/memcached_${SWIFT_USER}.conf
    #updating rsyslog parameters in its config
    sed -i 's/^\(#\)\(local\.\*.*\)/\2/g' ${SWIFT_CONFIG_DIR}/swift-rsyslog.conf 
    sed -i 's/\/var\/log\/swift/\/var\/log\/'${SWIFT_USER}'/g' ${SWIFT_CONFIG_DIR}/swift-rsyslog.conf
@@ -196,12 +198,10 @@ EOF
 #   sed -i '2 s/^#//' /etc/rsyslog.d/10-swift.conf
 
    su - ${SWIFT_USER} -c
-   su - ${SWIFT_USER} -c "cd ${SWIFT_CLI_REPO_DIR} && yes | pip install -r requirements.txt"
-   su - ${SWIFT_USER} -c "cd ${SWIFT_CLI_REPO_DIR} && yes | pip install -r test-requirements.txt"
    su - ${SWIFT_USER} -c "cd ${SWIFT_CLI_REPO_DIR} && yes | pip install -U pip tox pbr virtualenv setuptools"
    su - ${SWIFT_USER} -c "cd ${SWIFT_CLI_REPO_DIR} && apt-get install -y  libpython3.4-dev"
    su - ${SWIFT_USER} -c "cd ${SWIFT_CLI_REPO_DIR} && python setup.py install --user"
-   su - ${SWIFT_USER} -c "cd ${SWIFT_CLI_REPO_DIR} && chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_CLI_REPO_DIR}"
+   chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_CLI_REPO_DIR}
 
 
    su - ${SWIFT_USER} -c "cd ${SWIFT_REPO_DIR} && yes | pip install -r requirements.txt"
@@ -210,7 +210,7 @@ EOF
    su - ${SWIFT_USER} -c "cd ${SWIFT_REPO_DIR} && python setup.py install --user"
    su - ${SWIFT_USER} -c "cd ${SWIFT_REPO_DIR} && apt-get remove -y python-six"
    su - ${SWIFT_USER} -c "cd ${SWIFT_REPO_DIR} && yes | pip install -U six"
-   su - ${SWIFT_USER} -c "cd ${SWIFT_REPO_DIR} && chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_REPO_DIR}"
+   chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_REPO_DIR}
 
    cd ${SWIFT_REPO_DIR}/doc/saio/bin; cp * ${SWIFT_USER_BIN};
    chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_USER_BIN}; cd -

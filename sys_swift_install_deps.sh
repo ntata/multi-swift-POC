@@ -53,3 +53,10 @@ apt-get install -y python-mock
 #ubuntu 14.04 comes with older pip version. We get the latest version here
 wget https://bootstrap.pypa.io/get-pip.py
 python get-pip.py
+
+#wget https://github.com/ntata/swift/blob/master/requirements.txt
+#https://github.com/ntata/swift/blob/master/test-requirements.txt
+
+#pip install -r requirements.txt
+#pip install -r test-requirements.txt
+

@@ -196,23 +196,23 @@ EOF
 #   sed -i '2 s/^#//' /etc/rsyslog.d/10-swift.conf
 
    cd ${SWIFT_CLI_REPO_DIR}
-   su - ${SWIFT_USER} -c <<'EOF'
-   yes | pip install -r requirements.txt
-   yes | pip install -r test-requirements.txt
-   yes | pip install -U pip tox pbr virtualenv setuptools
-   apt-get install -y  libpython3.4-dev
-   python setup.py install --user
-   chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_CLI_REPO_DIR}
+   su - ${SWIFT_USER} -c
+   su - ${SWIFT_USER} -c 'yes | pip install -r requirements.txt'
+   su - ${SWIFT_USER} -c 'yes | pip install -r test-requirements.txt'
+   su - ${SWIFT_USER} -c 'yes | pip install -U pip tox pbr virtualenv setuptools'
+   su - ${SWIFT_USER} -c 'apt-get install -y  libpython3.4-dev'
+   su - ${SWIFT_USER} -c 'python setup.py install --user'
+   su - ${SWIFT_USER} -c 'chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_CLI_REPO_DIR}'
 
 
    cd ${SWIFT_REPO_DIR}
-   yes | pip install -r requirements.txt
-   yes | pip install -r test-requirements.txt
-   yes | pip install PyECLib
-   python setup.py install --user
-   apt-get remove -y python-six
-   yes | pip install -U six
-   chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_REPO_DIR}
+   su - ${SWIFT_USER} -c 'yes | pip install -r requirements.txt'
+   su - ${SWIFT_USER} -c 'yes | pip install -r test-requirements.txt'
+   su - ${SWIFT_USER} -c 'yes | pip install PyECLib'
+   su - ${SWIFT_USER} -c 'python setup.py install --user'
+   su - ${SWIFT_USER} -c 'apt-get remove -y python-six'
+   su - ${SWIFT_USER} -c 'yes | pip install -U six'
+   su - ${SWIFT_USER} -c 'chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_REPO_DIR}'
 
    cd ${SWIFT_REPO_DIR}/doc/saio/bin; cp * ${SWIFT_USER_BIN};
    chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_USER_BIN}; cd -

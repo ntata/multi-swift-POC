@@ -196,13 +196,14 @@ EOF
 #   sed -i '2 s/^#//' /etc/rsyslog.d/10-swift.conf
 
    cd ${SWIFT_CLI_REPO_DIR}
-   su ${SWIFT_USER}
+   su - ${SWIFT_USER} -c <<'EOF'
    yes | pip install -r requirements.txt
    yes | pip install -r test-requirements.txt
    yes | pip install -U pip tox pbr virtualenv setuptools
    apt-get install -y  libpython3.4-dev
    python setup.py install --user
    chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_CLI_REPO_DIR}
+
 
    cd ${SWIFT_REPO_DIR}
    yes | pip install -r requirements.txt
@@ -213,7 +214,6 @@ EOF
    yes | pip install -U six
    chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_REPO_DIR}
 
-# *********Updating Scripts in bin dir****************
    cd ${SWIFT_REPO_DIR}/doc/saio/bin; cp * ${SWIFT_USER_BIN};
    chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_USER_BIN}; cd -
 
@@ -224,6 +224,6 @@ EOF
    for x in {1..4}; do
       sed -i 's/\/srv\/'${x}'\/node/\/srv\/swift-'${i}'-'${x}'\/node/g' ${SWIFT_USER_BIN}/resetswift
    done
-su ubuntu
+EOF
 done
 

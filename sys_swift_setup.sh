@@ -156,7 +156,6 @@ EOF
 
 # ************Updating config files************
    cp ${SWIFT_REPO_DIR}/test/sample.conf ${SWIFT_CONFIG_DIR}/test.conf
-   #cp ${SWIFT_REPO_DIR}/etc/memcache.conf-sample ${SWIFT_CONFIG_DIR}/memcache.conf
    cp /etc/memcached.conf /etc/memcached_${SWIFT_USER}.conf
    cp ${SWIFT_REPO_DIR}/etc/swift-rsyslog.conf-sample ${SWIFT_CONFIG_DIR}/swift-rsyslog.conf
    
@@ -164,8 +163,8 @@ EOF
    cd ${SWIFT_CONFIG_DIR}
 
    #updating memcache config
-   #sed -i 's/^\(#\)\( memcache_servers =.*:\)\([0-9]*\)/echo "\2$((\3+'"${CLUSTER_NUMBER}"'))"/ge' ${SWIFTCONFIG_DIR}/memcache.conf
    sed -i 's/^\(-p \)\([0-9]*\)/echo "\1$((\2+'"${CLUSTER_NUMBER}"'))"/ge' /etc/memcached_${SWIFT_USER}.conf
+   
    #updating rsyslog parameters in its config
    sed -i 's/^\(#\)\(local\.\*.*\)/\2/g' ${SWIFT_CONFIG_DIR}/swift-rsyslog.conf 
    sed -i "s/\/var\/log\/swift/\/var\/log\/${SWIFT_USER}/g" ${SWIFT_CONFIG_DIR}/swift-rsyslog.conf
@@ -173,8 +172,6 @@ EOF
    #setting ports in configs
    PORT_INCREMENT=$(expr 100 \* ${CLUSTER_COUNT})
    find . -type f -exec sed -i 's/^bind_port = \(6[0-9]*\)/echo "bind_port = $((\1+'"${PORT_INCREMENT}"'))"/ge' {} \;
-   #find . -type f -exec sed -i 's/^auth_port = \([0-9]*\)/echo "auth_port = $((\1+'"${PORT_INCREMENT}"'))"/ge' {} \;
-   #find . -type f -exec sed -i 's/(8080)/echo "$((\1+'"${PORT_INCREMENT}"'))"/ge' {} \;
    
    PROXY_PORT=$(find . -name "proxy-server.conf" -exec sed -n 's/bind_port = \([0-9]*\)/\1/p' {} \;)
    NEW_PROXY_PORT=$(expr ${PROXY_PORT} + ${PORT_INCREMENT})

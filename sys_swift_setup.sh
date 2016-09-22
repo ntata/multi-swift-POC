@@ -162,7 +162,7 @@ EOF
    cd ${SWIFT_CONFIG_DIR}
 
    #updating memcache config
-   sed -i 's/^\(#\)\( memcache_servers =.*:\)\(.*\)/echo "\2$((\3+'"${x}"'))"/ge' ${SWIFT_CONFIG_DIR}/memcache.conf
+   sed -i 's/^\(#\)\( memcache_servers =.*:\)\(.*\)/echo "\2$((\3+'"${CLUSTER_NUMBER}"'))"/ge' ${SWIFT_CONFIG_DIR}/memcache.conf
    #updating rsyslog parameters in its config
    sed -i 's/^\(#\)\(local\.\*.*\)/\2/g' ${SWIFT_CONFIG_DIR}/swift-rsyslog.conf 
    sed -i 's/\/var\/log\/swift/\/var\/log\/'${SWIFT_USER}'/g' ${SWIFT_CONFIG_DIR}/swift-rsyslog.conf

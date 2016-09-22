@@ -198,16 +198,17 @@ EOF
 #   cp ${SWIFT_REPO_DIR}/doc/saio/rsyslog.d/10-swift.conf /etc/rsyslog.d/
 #   sed -i '2 s/^#//' /etc/rsyslog.d/10-swift.conf
 
-   if ${CLUSTER_COUNT}==1; then
-     cd ${SWIFT_REPO_DIR}
-     yes | pip install -r requirements.txt
-     yes | pip install -r test-requirements.txt
-   fi
+   #if ${CLUSTER_COUNT}==1; then
+   #fi
 
    cd ${SWIFT_CLI_REPO_DIR}
+     yes | pip install -r requirements.txt
+     yes | pip install -r test-requirements.txt
    su - ${SWIFT_USER} -c "cd ${SWIFT_CLI_REPO_DIR} && python setup.py install --user"
 
    cd ${SWIFT_REPO_DIR}
+     yes | pip install -r requirements.txt
+     yes | pip install -r test-requirements.txt
    su - ${SWIFT_USER} -c "cd ${SWIFT_REPO_DIR} && python setup.py install --user"
 
    chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_CLI_REPO_DIR}

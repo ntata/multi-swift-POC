@@ -51,7 +51,7 @@ CLUSTER_COUNT=0
 # good idea to have backup of fstab before we modify it
 cp /etc/fstab /etc/fstab.insert.bak
 
-for i in `more cluster.txt`; do
+for i in `more clusters.txt`; do
   
    CLUSTER_COUNT=$(expr ${CLUSTER_COUNT} + 1)
 
@@ -94,8 +94,10 @@ EOF
       SWIFT_CACHE_DIR="${SWIFT_CACHE_BASE_DIR}/swift-${i}-${x}"
 
       mkdir -p "${SWIFT_CACHE_DIR}"
-
+ 
       ln -s ${SWIFT_MOUNT_DIR} ${SWIFT_DISK_DIR}
+   #   used by swift recon to dump the stats to cache
+       chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_CACHE_DIR}
    done
 
    mkdir -p ${SWIFT_DISK_DIR}/node/sdb1
@@ -108,14 +110,12 @@ EOF
    mkdir -p ${SWIFT_DISK_DIR}/node/sdb7
    mkdir -p ${SWIFT_DISK_DIR}/node/sdb8
 
-   chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_DISK_BASE_DIR}
-   chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_MOUNT_BASE_DIR}
+   chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_DISK_DIR}
+   chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_MOUNT_POINT_DIR}
 
-   # used by swift recon to dump the stats to cache
-   chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_CACHE_DIR}
 
    SWIFT_USER_HOME="/home/${SWIFT_USER}"
-   SWIFT_USER_BIN="${SWIFT_USEiR_HOME}/.local/bin"
+   SWIFT_USER_BIN="${SWIFT_USER_HOME}/.local/bin"
    #mkdir -p ${SWIFT_USER_BIN}
 
    SWIFT_LOGIN_CONFIG="${SWIFT_USER_HOME}/.bashrc"
@@ -194,6 +194,7 @@ EOF
 #   sed -i '2 s/^#//' /etc/rsyslog.d/10-swift.conf
 
    cd ${SWIFT_CLI_REPO_DIR}
+   su ${SWIFT_USER}
    yes | pip install -r requirements.txt
    yes | pip install -r test-requirements.txt
    yes | pip install -U pip tox pbr virtualenv setuptools
@@ -218,7 +219,9 @@ EOF
    sed -i 's/\/dev\/sdb1/\/srv\/swift-'${i}'-disk/g' ${SWIFT_USER_BIN}/resetswift
    sed -i 's/\/mnt\/sdb1/\/mnt\/swift-'${i}'/g' ${SWIFT_USER_BIN}/resetswift
    sed -i 's/\/var\/cache\/swift/\/var\/cache\/swift-'${i}'' ${SWIFT_USER_BIN}/resetswift
-   for x in {1..4} do
+   for x in {1..4}; do
       sed -i 's/\/srv\/'${x}'\/node/\/srv\/swift-'${i}'-'${x}'\/node/g' ${SWIFT_USER_BIN}/resetswift
    done
+su ubuntu
+done
 

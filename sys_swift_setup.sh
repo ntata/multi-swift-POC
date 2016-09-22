@@ -197,22 +197,22 @@ EOF
 
    cd ${SWIFT_CLI_REPO_DIR}
    su - ${SWIFT_USER} -c
-   su - ${SWIFT_USER} -c 'yes | pip install -r requirements.txt'
-   su - ${SWIFT_USER} -c 'yes | pip install -r test-requirements.txt'
-   su - ${SWIFT_USER} -c 'yes | pip install -U pip tox pbr virtualenv setuptools'
-   su - ${SWIFT_USER} -c 'apt-get install -y  libpython3.4-dev'
-   su - ${SWIFT_USER} -c 'python setup.py install --user'
-   su - ${SWIFT_USER} -c 'chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_CLI_REPO_DIR}'
+   su - ${SWIFT_USER} -c "cd ${SWIFT_CLI_REPO_DIR} && yes | pip install -r requirements.txt"
+   su - ${SWIFT_USER} -c "cd ${SWIFT_CLI_REPO_DIR} && yes | pip install -r test-requirements.txt"
+   su - ${SWIFT_USER} -c "cd ${SWIFT_CLI_REPO_DIR} && yes | pip install -U pip tox pbr virtualenv setuptools"
+   su - ${SWIFT_USER} -c "cd ${SWIFT_CLI_REPO_DIR} && apt-get install -y  libpython3.4-dev"
+   su - ${SWIFT_USER} -c "cd ${SWIFT_CLI_REPO_DIR} && python setup.py install --user"
+   su - ${SWIFT_USER} -c "cd ${SWIFT_CLI_REPO_DIR} && chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_CLI_REPO_DIR}"
 
 
    cd ${SWIFT_REPO_DIR}
-   su - ${SWIFT_USER} -c 'yes | pip install -r requirements.txt'
-   su - ${SWIFT_USER} -c 'yes | pip install -r test-requirements.txt'
-   su - ${SWIFT_USER} -c 'yes | pip install PyECLib'
-   su - ${SWIFT_USER} -c 'python setup.py install --user'
-   su - ${SWIFT_USER} -c 'apt-get remove -y python-six'
-   su - ${SWIFT_USER} -c 'yes | pip install -U six'
-   su - ${SWIFT_USER} -c 'chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_REPO_DIR}'
+   su - ${SWIFT_USER} -c "cd ${SWIFT_CLI_REPO_DIR} && yes | pip install -r requirements.txt"
+   su - ${SWIFT_USER} -c "cd ${SWIFT_CLI_REPO_DIR} && yes | pip install -r test-requirements.txt"
+   su - ${SWIFT_USER} -c "cd ${SWIFT_CLI_REPO_DIR} && yes | pip install PyECLib"
+   su - ${SWIFT_USER} -c "cd ${SWIFT_CLI_REPO_DIR} && python setup.py install --user"
+   su - ${SWIFT_USER} -c "cd ${SWIFT_CLI_REPO_DIR} && apt-get remove -y python-six"
+   su - ${SWIFT_USER} -c "cd ${SWIFT_CLI_REPO_DIR} && yes | pip install -U six"
+   su - ${SWIFT_USER} -c "cd ${SWIFT_CLI_REPO_DIR} && chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_REPO_DIR}"
 
    cd ${SWIFT_REPO_DIR}/doc/saio/bin; cp * ${SWIFT_USER_BIN};
    chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_USER_BIN}; cd -

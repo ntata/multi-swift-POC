@@ -221,6 +221,7 @@ EOF
    sed -i 's/\/dev\/sdb1/\/srv\/swift-'${i}'-disk/g' ${SWIFT_USER_BIN}/resetswift
    sed -i 's/\/mnt\/sdb1/\/mnt\/swift-'${i}'/g' ${SWIFT_USER_BIN}/resetswift
    sed -i 's/\/var\/cache\/swift/\/var\/cache\/swift-'${i}'' ${SWIFT_USER_BIN}/resetswift
+   sed -i "s/memcached/memcached_${SWIFT_USER}/g" ${SWIFT_USER_BIN}/resetswift
    sed -i 's/^\(swift-ring-builder .*\)\([0-9]:\)\(6[0-9][0-9][0-9]\)\(.*\)/echo "\1\2$((\3+'"${PORT_INCREMENT}"'))\4"/ge' ${SWIFT_USER_BIN}/remakerings
    for x in {1..4}; do
       sed -i 's/\/srv\/'${x}'\/node/\/srv\/swift-'${i}'-'${x}'\/node/g' ${SWIFT_USER_BIN}/resetswift

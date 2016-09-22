@@ -99,20 +99,20 @@ EOF
  
       ln -s ${SWIFT_MOUNT_DIR} ${SWIFT_DISK_DIR}
    #   used by swift recon to dump the stats to cache
-       chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_CACHE_DIR}
+      chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_CACHE_DIR}
+      chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_DISK_DIR} 
    done
 
-   mkdir -p ${SWIFT_DISK_DIR}/node/sdb1
-   mkdir -p ${SWIFT_DISK_DIR}/node/sdb2
-   mkdir -p ${SWIFT_DISK_DIR}/node/sdb3
-   mkdir -p ${SWIFT_DISK_DIR}/node/sdb4 
-
-   mkdir -p ${SWIFT_DISK_DIR}/node/sdb5
-   mkdir -p ${SWIFT_DISK_DIR}/node/sdb6
-   mkdir -p ${SWIFT_DISK_DIR}/node/sdb7
-   mkdir -p ${SWIFT_DISK_DIR}/node/sdb8
-
-   chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_DISK_DIR}
+   mkdir -p ${SWIFT_DISK_BASE_DIR}/swift-${i}-1/node/sdb1
+   mkdir -p ${SWIFT_DISK_BASE_DIR}/swift-${i}-2/node/sdb2
+   mkdir -p ${SWIFT_DISK_BASE_DIR}/swift-${i}-3/node/sdb3
+   mkdir -p ${SWIFT_DISK_BASE_DIR}/swift-${i}-4/node/sdb4
+   
+   mkdir -p ${SWIFT_DISK_BASE_DIR}/swift-${i}-1/node/sdb5
+   mkdir -p ${SWIFT_DISK_BASE_DIR}/swift-${i}-2/node/sdb6
+   mkdir -p ${SWIFT_DISK_BASE_DIR}/swift-${i}-3/node/sdb7
+   mkdir -p ${SWIFT_DISK_BASE_DIR}/swift-${i}-4/node/sdb8
+   
    chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_MOUNT_POINT_DIR}
 
 
@@ -175,7 +175,7 @@ EOF
    
    PROXY_PORT=$(find . -name "proxy-server.conf" -exec sed -n 's/bind_port = \([0-9]*\)/\1/p' {} \;)
    NEW_PROXY_PORT=$(expr ${PROXY_PORT} + ${PORT_INCREMENT})
-   find . -type f -exec sed -i 's/8080/'"${NEW_PORT}"'/g' {} \;
+   find . -type f -exec sed -i 's/8080/'"${NEW_PROXY_PORT}"'/g' {} \;
   
    #updating username in configs
    #find . -type f -exec sed -i 's/^user =.*/echo "user = '"${SWIFT_USER}"'"/ge' {} \;

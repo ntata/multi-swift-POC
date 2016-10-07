@@ -43,7 +43,7 @@ do
        echo "swift user swift-${i} has been created"
        adduser swift-${i} sudo
        echo "swift user has been added to the  group"
-       echo "try \"sudo su swift-${i}\" to switch to swift user and it will not prompt for password"
+       echo "try 'sudo su swift-${i}' to switch to swift user and it will not prompt for password"
 
     fi
 done

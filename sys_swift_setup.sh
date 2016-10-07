@@ -156,15 +156,19 @@ EOF
 
 # ************Updating config files************
    cp ${SWIFT_REPO_DIR}/test/sample.conf ${SWIFT_CONFIG_DIR}/test.conf
-   cp /etc/memcached.conf /etc/memcached_${SWIFT_USER}.conf
    cp ${SWIFT_REPO_DIR}/etc/swift-rsyslog.conf-sample ${SWIFT_CONFIG_DIR}/swift-rsyslog.conf
    
    cd ${SWIFT_REPO_DIR}/doc/saio/swift; cp -r * ${SWIFT_CONFIG_DIR}
    cd ${SWIFT_CONFIG_DIR}
 
    #updating memcache config
-   sed -i 's/^\(-p \)\([0-9]*\)/echo "\1$((\2+'"${CLUSTER_NUMBER}"'))"/ge' /etc/memcached_${SWIFT_USER}.conf
-   
+   MEMCACHE_PORT=$(expr 11211 + ${CLUSTER_NUMBER})
+   cp /etc/memcached.conf /etc/memcached_${SWIFT_USER}.conf
+   cp ${SWIFT_REPO_DIR}/etc/memcache.conf-sample ${SWIFT_CONFIG_DIR}/memcache.conf
+   sed -i 's/^\(-p \)\([0-9]*\)/echo "\1$(('"${MEMCACHE_PORT}"'))"/ge' /etc/memcached_${SWIFT_USER}.conf
+   sed -i 's/^\(#\)\( memcache_servers =.*\)/echo "\2"/ge' ${SWIFT_CONFIG_DIR}/memcache.conf
+   sed -i "s/11211/${MEMCACHE_PORT}/g" ${SWIFT_CONFIG_DIR}/memcache.conf
+
    #updating rsyslog parameters in its config
    sed -i 's/^\(#\)\(local\.\*.*\)/\2/g' ${SWIFT_CONFIG_DIR}/swift-rsyslog.conf 
    sed -i "s/\/var\/log\/swift/\/var\/log\/${SWIFT_USER}/g" ${SWIFT_CONFIG_DIR}/swift-rsyslog.conf

@@ -2,7 +2,7 @@
 
 #Author: Paul Dardeau <paul.dardeau@intel.com>
 #        Nandini Tata <nandini.tata@intel.com>
-# Copyright (c) 2016 OpenStack Foundation
+# Copyright (c) 2016 Intel Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,13 +27,13 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-SWIFT_USER_GROUP=swift
+SWIFT_GROUP=swift
 
 for i in `more clusters.txt`; do
-   SWIFT_HOME_DIR=/home/swift-${i}
+   SWIFT_USER_HOME=/home/swift-${i}
    SWIFT_USER=swift-${i}
 
-   cd ${SWIFT_HOME_DIR}
+   cd ${SWIFT_USER_HOME}
    PROXY_PORT=$(find /etc/${SWIFT_USER} -name "proxy-server.conf" -exec sed -n 's/bind_port = \([0-9]*\)/\1/p' {} \;)
    echo  "export ST_AUTH=http://127.0.0.1:${PROXY_PORT}/auth/v1.0
    export ST_USER=test:tester
@@ -41,5 +41,5 @@ for i in `more clusters.txt`; do
    export SWIFT_ROOT=/etc/${SWIFT_USER}
    export SWIFT_RUN_DIR=/var/run/${SWIFT_USER}
    export SWIFT_XPROFILE_DIR=/tmp/log/${SWIFT_USER}" >openrc
-   chown ${SWIFT_USER}:${SWIFT_USER_GROUP} openrc
+   chown ${SWIFT_USER}:${SWIFT_GROUP} openrc
 done

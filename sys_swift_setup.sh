@@ -24,12 +24,12 @@
 
 
 #*************General Information*************
-# 1) /var/log/swift - /etc/rsyslog.d/10-swift.conf is the log file that enables rsyslog to write logs to /var/log/swift
-# 2) /var/cache/swift - swift-recon dumps stats in the cache directory dedicated to each storage node
-# 3) /var/run/swift - swift processes's pids are stored in /var/run/swift. 
-# 4) /tmp/log/swift - a temporary directory used by some unit tests to run the profiler
-# 5) memcached service stores user credentials along with the tokens. It is important to ensure its running before starting the swift services
-# 6) This SAIO mimics the web solution  - 4 devices carved out 1 GB swift-disk and mounted as 4 loopback devices at /mnt/sdb1
+# 1) /var/log/swift-<dept_name> - /etc/rsyslog.d/10-swift.conf is the log file that enables rsyslog to write logs to /var/log/swift
+# 2) /var/cache/swift-<dept_name> - swift-recon dumps stats in the cache directory dedicated to each storage node
+# 3) /var/run/swift-<dept_name> - swift processes's pids are stored in /var/run/swift. 
+# 4) /tmp/log/swift-<dept_name> - a temporary directory used by some unit tests to run the profiler
+# 5) memcached server per department and a corresponding memcache client. Memcache service stores user credentials along with the tokens. It is important to ensure its running before starting the swift services
+# 6) This setup mimics the web solution  - 4 devices carved out 1 GB swift-disk and mounted as 4 loopback devices at /mnt/swift-<dept_name>
 #***************************************
 
 

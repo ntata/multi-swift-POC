@@ -52,6 +52,6 @@ done
 if grep -q ${SWIFT_GROUP} /etc/sudoers; then
    echo "swift group has an entry in sudoers"
 else
-    echo "${SWIFT_GROUP} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+    echo "%${SWIFT_GROUP} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 fi
 

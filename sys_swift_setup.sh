@@ -173,13 +173,14 @@ EOF
    #Here, we configure all the simulated storage nodes to log to one facility
    sed -i 's/^\(#\)\(local\.\*.*\)/\2/g' ${SWIFT_CONFIG_DIR}/swift-rsyslog.conf 
    sed -i "s/\/var\/log\/swift/\/var\/log\/${SWIFT_USER}/g" ${SWIFT_CONFIG_DIR}/swift-rsyslog.conf
-   if (${CLUSTER_COUNT} == 1) then
+   if [${CLUSTER_COUNT} -eq 1] then
       sed -i 's/^\(log_facility = LOG_LOCAL\)\([0-9]\)/echo "\1$((1+'"${CLUSTER_COUNT}"'))"/ge' ${SWIFT_CONFIG_DIR}/account-server/*.conf
       sed -i 's/^\(log_facility = LOG_LOCAL\)\([0-9]\)/echo "\1$((1+'"${CLUSTER_COUNT}"'))"/ge' ${SWIFT_CONFIG_DIR}/container-server/*.conf
       sed -i 's/^\(log_facility = LOG_LOCAL\)\([0-9]\)/echo "\1$((1+'"${CLUSTER_COUNT}"'))"/ge' ${SWIFT_CONFIG_DIR}/object-server/*.conf
       sed -i 's/^\(log_facility = LOG_LOCAL\)\([0-9]\)/echo "\1$((1+'"${CLUSTER_COUNT}"'))"/ge' ${SWIFT_CONFIG_DIR}/object-server/*.conf
       sed -i 's/^\(log_facility = LOG_LOCAL\)\([0-9]\)/echo "\1$((2+'"${CLUSTER_COUNT}"'))"/ge' ${SWIFT_CONFIG_DIR}/object-expirer.conf
-   else if (${CLUSTER_COUNT} == 2) then
+   fi
+   if [${CLUSTER_COUNT} -eq 2] then
       sed -i 's/^\(log_facility = LOG_LOCAL\)\([0-9]\)/echo "\1$((3+'"${CLUSTER_COUNT}"'))"/ge' ${SWIFT_CONFIG_DIR}/proxy-server.conf
       sed -i 's/^\(log_facility = LOG_LOCAL\)\([0-9]\)/echo "\1$((4+'"${CLUSTER_COUNT}"'))"/ge' ${SWIFT_CONFIG_DIR}/account-server/*.conf
       sed -i 's/^\(log_facility = LOG_LOCAL\)\([0-9]\)/echo "\1$((4+'"${CLUSTER_COUNT}"'))"/ge' ${SWIFT_CONFIG_DIR}/container-server/*.conf
@@ -238,7 +239,8 @@ EOF
    sed -i 's/\/var\/cache\/swift/\/var\/cache\/swift-'${i}'' ${SWIFT_USER_BIN}/resetswift
    sed -i "s/service memcached restart/\/etc\/init\.d\/memcached restart ${SWIFT_USER}/g" ${SWIFT_USER_BIN}/resetswift
    sed -i 's/^\(swift-ring-builder .*\)\([0-9]:\)\(6[0-9][0-9][0-9]\)\(.*\)/echo "\1\2$((\3+'"${PORT_INCREMENT}"'))\4"/ge' ${SWIFT_USER_BIN}/remakerings
-   for x in {1..4}; do
+   for x in {1..4}
+   do
       sed -i 's/\/srv\/'${x}'\/node/\/srv\/swift-'${i}'-'${x}'\/node/g' ${SWIFT_USER_BIN}/resetswift
    done
 done

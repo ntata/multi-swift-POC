@@ -166,7 +166,7 @@ EOF
    cp /etc/memcached.conf /etc/memcached_${SWIFT_USER}.conf
    cp ${SWIFT_REPO_DIR}/etc/memcache.conf-sample ${SWIFT_CONFIG_DIR}/memcache.conf
    sed -i 's/^\(-p \)\(.*\)/echo "\1$(('"${MEMCACHE_PORT}"'))"/ge' /etc/memcached_${SWIFT_USER}.conf
-   sed -i 's/^\(#\)\( memcache_servers = .*\)/echo "\2"/ge' ${SWIFT_CONFIG_DIR}/memcache.conf
+   sed -i 's/^\(# \)\(memcache_servers = .*\)/echo "\2"/ge' ${SWIFT_CONFIG_DIR}/memcache.conf
    sed -i "s/11211/${MEMCACHE_PORT}/g" ${SWIFT_CONFIG_DIR}/memcache.conf
 
    #updating rsyslog parameters in its config

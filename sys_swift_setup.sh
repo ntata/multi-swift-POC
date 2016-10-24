@@ -165,8 +165,8 @@ EOF
    MEMCACHE_PORT=$(expr 11211 + ${CLUSTER_COUNT})
    cp /etc/memcached.conf /etc/memcached_${SWIFT_USER}.conf
    cp ${SWIFT_REPO_DIR}/etc/memcache.conf-sample ${SWIFT_CONFIG_DIR}/memcache.conf
-   sed -i 's/^\(-p \).*/echo "\1$(('"${MEMCACHE_PORT}"'))"/ge' /etc/memcached_${SWIFT_USER}.conf
-   sed -i 's/^\(#\)\( memcache_servers =.*\)/echo "\2"/ge' ${SWIFT_CONFIG_DIR}/memcache.conf
+   sed -i 's/^\(-p \)\(.*\)/echo "\1$(('"${MEMCACHE_PORT}"'))"/ge' /etc/memcached_${SWIFT_USER}.conf
+   sed -i 's/^\(#\)\( memcache_servers = .*\)/echo "\2"/ge' ${SWIFT_CONFIG_DIR}/memcache.conf
    sed -i "s/11211/${MEMCACHE_PORT}/g" ${SWIFT_CONFIG_DIR}/memcache.conf
 
    #updating rsyslog parameters in its config
@@ -174,18 +174,21 @@ EOF
    sed -i 's/^\(#\)\(local\.\*.*\)/\2/g' ${SWIFT_CONFIG_DIR}/swift-rsyslog.conf 
    sed -i "s/\/var\/log\/swift/\/var\/log\/${SWIFT_USER}/g" ${SWIFT_CONFIG_DIR}/swift-rsyslog.conf
    if [${CLUSTER_COUNT} -eq 1]; then
-      sed -i 's/^\(log_facility = LOG_LOCAL\)\([0-9]\)/echo "\1$((1+'"${CLUSTER_COUNT}"'))"/ge' ${SWIFT_CONFIG_DIR}/account-server/*.conf
-      sed -i 's/^\(log_facility = LOG_LOCAL\)\([0-9]\)/echo "\1$((1+'"${CLUSTER_COUNT}"'))"/ge' ${SWIFT_CONFIG_DIR}/container-server/*.conf
-      sed -i 's/^\(log_facility = LOG_LOCAL\)\([0-9]\)/echo "\1$((1+'"${CLUSTER_COUNT}"'))"/ge' ${SWIFT_CONFIG_DIR}/object-server/*.conf
-      sed -i 's/^\(log_facility = LOG_LOCAL\)\([0-9]\)/echo "\1$((1+'"${CLUSTER_COUNT}"'))"/ge' ${SWIFT_CONFIG_DIR}/object-server/*.conf
-      sed -i 's/^\(log_facility = LOG_LOCAL\)\([0-9]\)/echo "\1$((2+'"${CLUSTER_COUNT}"'))"/ge' ${SWIFT_CONFIG_DIR}/object-expirer.conf
+      for x in {1..4}; do
+         sed -i 's/^\(log_facility = LOG_LOCAL\)\([0-9]\)/echo "\1$(('"${CLUSTER_COUNT}"'))"/ge' ${SWIFT_CONFIG_DIR}/account-server/${x}.conf
+         sed -i 's/^\(log_facility = LOG_LOCAL\)\([0-9]\)/echo "\1$(('"${CLUSTER_COUNT}"'))"/ge' ${SWIFT_CONFIG_DIR}/container-server/${x}.conf
+         sed -i 's/^\(log_facility = LOG_LOCAL\)\([0-9]\)/echo "\1$(('"${CLUSTER_COUNT}"'))"/ge' ${SWIFT_CONFIG_DIR}/object-server/${x}.conf
+      done
+      sed -i 's/^\(log_facility = LOG_LOCAL\)\([0-9]\)/echo "\1$((1+'"${CLUSTER_COUNT}"'))"/ge' ${SWIFT_CONFIG_DIR}/object-expirer.conf
    fi
    if [${CLUSTER_COUNT} -eq 2]; then
-      sed -i 's/^\(log_facility = LOG_LOCAL\)\([0-9]\)/echo "\1$((3+'"${CLUSTER_COUNT}"'))"/ge' ${SWIFT_CONFIG_DIR}/proxy-server.conf
-      sed -i 's/^\(log_facility = LOG_LOCAL\)\([0-9]\)/echo "\1$((4+'"${CLUSTER_COUNT}"'))"/ge' ${SWIFT_CONFIG_DIR}/account-server/*.conf
-      sed -i 's/^\(log_facility = LOG_LOCAL\)\([0-9]\)/echo "\1$((4+'"${CLUSTER_COUNT}"'))"/ge' ${SWIFT_CONFIG_DIR}/container-server/*.conf
-      sed -i 's/^\(log_facility = LOG_LOCAL\)\([0-9]\)/echo "\1$((4+'"${CLUSTER_COUNT}"'))"/ge' ${SWIFT_CONFIG_DIR}/object-server/*.conf
-      sed -i 's/^\(log_facility = LOG_LOCAL\)\([0-9]\)/echo "\1$((5+'"${CLUSTER_COUNT}"'))"/ge' ${SWIFT_CONFIG_DIR}/object-expirer.conf
+      sed -i 's/^\(log_facility = LOG_LOCAL\)\([0-9]\)/echo "\1$((2+'"${CLUSTER_COUNT}"'))"/ge' ${SWIFT_CONFIG_DIR}/proxy-server.conf
+      for x in {1..4}; do
+         sed -i 's/^\(log_facility = LOG_LOCAL\)\([0-9]\)/echo "\1$((3+'"${CLUSTER_COUNT}"'))"/ge' ${SWIFT_CONFIG_DIR}/account-server/${x}.conf
+         sed -i 's/^\(log_facility = LOG_LOCAL\)\([0-9]\)/echo "\1$((3+'"${CLUSTER_COUNT}"'))"/ge' ${SWIFT_CONFIG_DIR}/container-server/${x}.conf
+         sed -i 's/^\(log_facility = LOG_LOCAL\)\([0-9]\)/echo "\1$((3+'"${CLUSTER_COUNT}"'))"/ge' ${SWIFT_CONFIG_DIR}/object-server/${x}.conf
+      done
+      sed -i 's/^\(log_facility = LOG_LOCAL\)\([0-9]\)/echo "\1$((4+'"${CLUSTER_COUNT}"'))"/ge' ${SWIFT_CONFIG_DIR}/object-expirer.conf
    fi
 
    #setting ports in configs
@@ -196,8 +199,6 @@ EOF
    NEW_PROXY_PORT=$(expr ${PROXY_PORT} + ${PORT_INCREMENT})
    find . -type f -exec sed -i 's/8080/'"${NEW_PROXY_PORT}"'/g' {} \;
   
-   #updating username in configs
-   #find . -type f -exec sed -i 's/^user =.*/echo "user = '"${SWIFT_USER}"'"/ge' {} \;
 
    #updating devices and cache directories
    find . -type f -exec sed -i 's/\/var\/cache\/swift/\/var\/cache\/swift1/g' {} \;
@@ -209,13 +210,6 @@ EOF
    cd -
    chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_CONFIG_DIR}
    find ${SWIFT_CONFIG_DIR}/ -name \*.conf | xargs sed -i "s/<your-user-name>/${SWIFT_USER}/"
-
-# TODO********Updating logging**********
-#   cp ${SWIFT_REPO_DIR}/doc/saio/rsyslog.d/10-swift.conf /etc/rsyslog.d/
-#   sed -i '2 s/^#//' /etc/rsyslog.d/10-swift.conf
-
-   #if ${CLUSTER_COUNT}==1; then
-   #fi
 
    cd ${SWIFT_CLI_REPO_DIR}
      yes | pip install -r requirements.txt
@@ -236,7 +230,7 @@ EOF
    sed -i "/find \/var\/log\/swift/d" ${SWIFT_USER_BIN}/resetswift
    sed -i 's/\/dev\/sdb1/\/srv\/swift-'${i}'-disk/g' ${SWIFT_USER_BIN}/resetswift
    sed -i 's/\/mnt\/sdb1/\/mnt\/swift-'${i}'/g' ${SWIFT_USER_BIN}/resetswift
-   sed -i 's/\/var\/cache\/swift/\/var\/cache\/swift-'${i}'' ${SWIFT_USER_BIN}/resetswift
+   sed -i 's/\/var\/cache\/swift/\/var\/cache\/swift-'${i}'/g' ${SWIFT_USER_BIN}/resetswift
    sed -i "s/service memcached restart/\/etc\/init\.d\/memcached restart ${SWIFT_USER}/g" ${SWIFT_USER_BIN}/resetswift
    sed -i 's/^\(swift-ring-builder .*\)\([0-9]:\)\(6[0-9][0-9][0-9]\)\(.*\)/echo "\1\2$((\3+'"${PORT_INCREMENT}"'))\4"/ge' ${SWIFT_USER_BIN}/remakerings
    for x in {1..4}

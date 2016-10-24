@@ -237,6 +237,6 @@ EOF
    do
       sed -i 's/\/srv\/'${x}'\/node/\/srv\/swift-'${i}'-'${x}'\/node/g' ${SWIFT_USER_BIN}/resetswift
    done
-   /etc/init.d/memcache start ${SWIFT_USER}
+   /etc/init.d/memcached start ${SWIFT_USER}
 done
 

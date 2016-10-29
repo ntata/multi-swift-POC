@@ -42,6 +42,7 @@ for i in `more clusters.txt`; do
    export SWIFT_RUN_DIR=/var/run/${SWIFT_USER}
    export SWIFT_XPROFILE_DIR=/tmp/log/${SWIFT_USER}" >openrc
    chown ${SWIFT_USER}:${SWIFT_GROUP} openrc
+   cd -
    cp start_swift.sh ${SWIFT_USER_HOME}
    chown ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_USER_HOME}/start_swift.sh
    cp stop_swift.sh ${SWIFT_USER_HOME}

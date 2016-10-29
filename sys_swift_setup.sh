@@ -174,7 +174,7 @@ EOF
    #sed -i 's/^\(#\)\(local\.\*.*\)/\2/g' ${SWIFT_CONFIG_DIR}/swift-rsyslog.conf 
    #sed -i "s/\/var\/log\/swift/\/var\/log\/${SWIFT_USER}/g" ${SWIFT_CONFIG_DIR}/swift-rsyslog.conf
    if [[ ${CLUSTER_COUNT} -eq 1 ]]; then
-       sed -i 's/^\(\$PrivDropToGroup\)\( syslog\)/echo "\1 adm"/ge' /etc/rsyslog.conf
+       sed -i 's/PrivDropToGroup syslog/PrivDropToGroup adm/g' /etc/rsyslog.conf
    fi
    cp ${SWIFT_REPO_DIR}/doc/saio/rsyslog.d/10-swift.conf /etc/rsyslog.d/10-swift.conf
    sed -i 's/^\(#\)\(local1,local2.*\)/echo "\2"/ge' /etc/rsyslog.d/10-swift.conf

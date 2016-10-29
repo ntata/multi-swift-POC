@@ -70,6 +70,7 @@ for i in `more clusters.txt`; do
    chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_RUN_DIR}
    chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_PROFILE_LOG_DIR}
    chown -R syslog.adm ${SWIFT_LOG_DIR}
+   chmod -R g+w ${SWIFT_LOG_DIR}
    chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_PROFILE_LOG_DIR}
 
    SWIFT_DISK="${SWIFT_DISK_BASE_DIR}/swift-${i}-disk"
@@ -254,5 +255,6 @@ EOF
       sed -i 's/\/srv\/'${x}'\/node/\/srv\/swift-'${i}'-'${x}'\/node/g' ${SWIFT_USER_BIN}/resetswift
    done
    /etc/init.d/memcached start ${SWIFT_USER}
+   service rsyslog restart
 done
 

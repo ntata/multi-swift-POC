@@ -69,7 +69,7 @@ for i in `more clusters.txt`; do
 
    chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_RUN_DIR}
    chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_PROFILE_LOG_DIR}
-   chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_LOG_DIR}
+   chown -R syslog.adm ${SWIFT_LOG_DIR}
    chown -R ${SWIFT_USER}:${SWIFT_GROUP} ${SWIFT_PROFILE_LOG_DIR}
 
    SWIFT_DISK="${SWIFT_DISK_BASE_DIR}/swift-${i}-disk"
@@ -156,7 +156,7 @@ EOF
 
 # ************Updating config files************
    cp ${SWIFT_REPO_DIR}/test/sample.conf ${SWIFT_CONFIG_DIR}/test.conf
-   cp ${SWIFT_REPO_DIR}/etc/swift-rsyslog.conf-sample ${SWIFT_CONFIG_DIR}/swift-rsyslog.conf
+#   cp ${SWIFT_REPO_DIR}/etc/swift-rsyslog.conf-sample ${SWIFT_CONFIG_DIR}/swift-rsyslog.conf
    
    cd ${SWIFT_REPO_DIR}/doc/saio/swift; cp -r * ${SWIFT_CONFIG_DIR}
    cd ${SWIFT_CONFIG_DIR}
@@ -171,8 +171,21 @@ EOF
 
    #updating rsyslog parameters in its config
    #Here, we configure all the simulated storage nodes to log to one facility
-   sed -i 's/^\(#\)\(local\.\*.*\)/\2/g' ${SWIFT_CONFIG_DIR}/swift-rsyslog.conf 
-   sed -i "s/\/var\/log\/swift/\/var\/log\/${SWIFT_USER}/g" ${SWIFT_CONFIG_DIR}/swift-rsyslog.conf
+   #sed -i 's/^\(#\)\(local\.\*.*\)/\2/g' ${SWIFT_CONFIG_DIR}/swift-rsyslog.conf 
+   #sed -i "s/\/var\/log\/swift/\/var\/log\/${SWIFT_USER}/g" ${SWIFT_CONFIG_DIR}/swift-rsyslog.conf
+   sed -i 's/^\($PrivDropToGroup \)\(.*\)/echo "\1adm"/ge' /etc/rsyslog.conf
+   cp ${SWIFT_REPO_DIR}/doc/saio/rsyslog.d/10-swift.conf /etc/rsyslog.d/10-swift.conf
+   sed -i 's/^\(#\)\(local1,local2.*\)/echo "\2"/ge' /etc/rsyslog.d/10-swift.conf
+   if [[ ${CLUSTER_COUNT} -eq 1 ]]; then
+       sed -i "s/\/var\/log\/swift\/proxy/\/var\/log\/swift-${i}\/proxy/g" /etc/rsyslog.d/10-swift.conf
+       sed -i "s/\/var\/log\/swift\/storage1/\/var\/log\/swift-${i}\/storage-${i}/g" /etc/rsyslog.d/10-swift.conf
+       sed -i "s/\/var\/log\/swift\/storage2/\/var\/log\/swift-${i}\/object-expirer-${i}/g" /etc/rsyslog.d/10-swift.conf
+   fi
+   if [[ ${CLUSTER_COUNT} -eq 2 ]]; then
+       sed -i "s/\/var\/log\/swift\/storage3/\/var\/log\/swift-${i}\/proxy/g" /etc/rsyslog.d/10-swift.conf
+       sed -i "s/\/var\/log\/swift\/storage4/\/var\/log\/swift-${i}\/storage-${i}/g" /etc/rsyslog.d/10-swift.conf
+       sed -i "s/\/var\/log\/swift\/expirer/\/var\/log\/swift-${i}\/object-expirer-${i}/g" /etc/rsyslog.d/10-swift.conf
+   fi
    if [[ ${CLUSTER_COUNT} -eq 1 ]]; then
       sed -i 's/^\(log_facility = LOG_LOCAL\)\([0-9]\)/echo "\1$(('"${CLUSTER_COUNT}"'))"/ge' ${SWIFT_CONFIG_DIR}/account-server/proxy-server.conf
       for x in {1..4}; do

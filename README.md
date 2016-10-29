@@ -67,3 +67,33 @@ cluster
 - Memcached
     Sales memcached running on port 11212
     Accounting memcached running on port 11213
+
+Installation Process
+-------------------
+This project includes set of bash scripts with comments inline to install Swift All in One. This setup mimics the layout of [SAIO - Swift All In One](http://docs.openstack.org/developer/swift/development_saio.html)
+
+These scripts as targeted and tested for Ubuntu 14.04
+
+##Order of execution:
+
+```bash
+sudo ./sys_swift_check_users.sh
+sudo ./sys_swift_install_deps.sh
+sudo ./sys_swift_setup.sh
+sudo ./make_openrc.sh
+```
+
+At this point, multiple Swift clusters are installed. To get started using multiple instances,
+
+```bash
+sudo su swift-<dept>
+source openrc
+./startmain.sh
+```
+
+##Remove Swift:
+
+```bash
+sudo ./stop_swift.sh
+sudo ./sys_swift_remove.sh
+```

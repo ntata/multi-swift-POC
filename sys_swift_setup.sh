@@ -188,7 +188,6 @@ EOF
        sed -i "s/\/var\/log\/swift\/expirer/\/var\/log\/swift-${i}\/object-expirer-${i}/g" /etc/rsyslog.d/10-swift.conf
    fi
    if [[ ${CLUSTER_COUNT} -eq 1 ]]; then
-      sed -i 's/^\(log_facility = LOG_LOCAL\)\([0-9]\)/echo "\1$(('"${CLUSTER_COUNT}"'))"/ge' ${SWIFT_CONFIG_DIR}/account-server/proxy-server.conf
       for x in {1..4}; do
          sed -i 's/^\(log_facility = LOG_LOCAL\)\([0-9]\)/echo "\1$((1+'"${CLUSTER_COUNT}"'))"/ge' ${SWIFT_CONFIG_DIR}/account-server/${x}.conf
          sed -i 's/^\(log_facility = LOG_LOCAL\)\([0-9]\)/echo "\1$((1+'"${CLUSTER_COUNT}"'))"/ge' ${SWIFT_CONFIG_DIR}/container-server/${x}.conf

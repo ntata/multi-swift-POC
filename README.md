@@ -57,20 +57,34 @@ cluster
 - Each cluster gets their own disk drives for storing data
 	Marketing: /srv/swift-mkt-disk
 	Finance: /srv/swift-fin-disk
-- Paths
+- Swift Configuration files path
     /etc/swift-mkt/swift.conf
     /etc/swift-fin/swift.conf
     ...
-- Ports
+- Proxy Ports
+    Marketting: 8180
+    Finance: 8280
+- Storage Ports
     Marketing: port ranges 61** - 61**
     Finance: port ranges 62** - 62**
 - Memcached
     Marketing memcached running on port 11212
     Finance memcached running on port 11213
-
+- Run Directory
+    Marketing: /var/run/swift-mkt
+    Finance: /var/run/swift-fin
+- Cache Directory
+    Marketing: /var/cache/swift-mkt*
+    Finance: /var/cache/swift-fin*
+- Logs
+    Marketing: /var/log/swift-mkt
+    Finance: /var/log/swift-fin
 Installation Process
 -------------------
 This project includes set of bash scripts with comments inline to install Swift All in One. This setup mimics the layout of [SAIO - Swift All In One](http://docs.openstack.org/developer/swift/development_saio.html)
+
+This project has custom code that enables passing the swift configuration directory as an environment variable "SWIFT_ROOT" that is set using the openrc file. Similarly, swift run dir "SWIFT_RUN_DIR" is set.
+These changes enable us to have two separately cloned Swift repos with separate python Swift clients configured to run on shared hardware.
 
 These scripts as targeted and tested for Ubuntu 14.04
 

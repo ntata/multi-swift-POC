@@ -8,7 +8,7 @@ What does it take to be able to run multiple Swift clusters on shared hardware?
 Assumptions
 -----------
 (a) Each cluster would have dedicated disk drives for storing data
-(b) Only testing with 'tmpauth' at this time
+(b) Only testing with 'tempauth' at this time
 
 Why
 ---
@@ -21,7 +21,7 @@ following support running multiple instances:
 How
 ---
 Each cluster must have its own ports and configuration files. In the case of using
-'tmpauth' (default auth system for Swift), each cluster must be given it's own
+'tempauth' (default auth system for Swift), each cluster must be given it's own
 memcached instance. Each cluster should also have some indicator to use for syslog
 entries so that individual log messages can be associated with a specific cluster.
 
@@ -45,28 +45,28 @@ Alternatives
 
 Example
 -------
-- Sales department needs to store blobs (audio, images, video clips) for various
+- Marketing department needs to store blobs (audio, images, video clips) for various
 advertising campaigns
-- Accounting department needs to store scanned images of invoices, receipts,
+- Finance department needs to store scanned images of invoices, receipts,
 contracts, etc.
 - Suppose accounting department files must be stored in separate cluster due to
 legal or regulatory requirements
 - 1 set of servers for shared infrastructure
-- Set up 2 Swift clusters - a 'sales' Swift cluster and an 'accounting' Swift
+- Set up 2 Swift clusters - a 'Marketing' Swift cluster and a 'Finance' Swift
 cluster
 - Each cluster gets their own disk drives for storing data
-	Sales: /dev/sdc, /dev/sdd, /dev/sde
-	Accounting: /dev/sdf, /dev/sdg, /dev/sdh
+	Marketing: /srv/swift-mkt-disk
+	Finance: /srv/swift-fin-disk
 - Paths
-    /etc/swift-sales/swift.conf
-    /etc/swift-acct/swift.conf
+    /etc/swift-mkt/swift.conf
+    /etc/swift-fin/swift.conf
     ...
 - Ports
-    Sales: port ranges 61** - 61**
-    Accounting: port ranges 62** - 62**
+    Marketing: port ranges 61** - 61**
+    Finance: port ranges 62** - 62**
 - Memcached
-    Sales memcached running on port 11212
-    Accounting memcached running on port 11213
+    Marketing memcached running on port 11212
+    Finance memcached running on port 11213
 
 Installation Process
 -------------------
@@ -87,8 +87,8 @@ At this point, multiple Swift clusters are installed. To get started using multi
 
 ```bash
 sudo su swift-<dept>
-source openrc
-./startmain.sh
+source ~/openrc
+cd; ./start_swift.sh
 ```
 
 ##Remove Swift:

@@ -101,14 +101,14 @@ These scripts as targeted and tested for Ubuntu 14.04
 At this point, multiple Swift clusters are installed. To get started using multiple instances,
 
 ```bash
-sudo su swift-<dept>
-source ~/openrc
-cd; ./start_swift.sh
+1. sudo su swift-<dept>
+2. source ~/openrc
+3. cd; ./start_swift.sh
 ```
 
 ##Remove Swift:
 
 ```bash
-sudo ./stop_swift.sh
-sudo ./sys_swift_remove.sh
+1. sudo ./stop_swift.sh
+2. sudo ./sys_swift_remove.sh
 ```

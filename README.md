@@ -7,8 +7,8 @@ What does it take to be able to run multiple Swift clusters on shared hardware?
 
 Assumptions
 -----------
-(a) Each cluster would have dedicated disk drives for storing data
-(b) Only testing with 'tempauth' at this time
+- Each cluster would have dedicated disk drives for storing data
+- Only testing with 'tempauth' at this time
 
 Why
 ---
@@ -20,8 +20,8 @@ following support running multiple instances:
 
 How
 ---
-Each cluster must have its own ports and configuration files. In the case of using
-'tempauth' (default auth system for Swift), each cluster must be given it's own
+Each cluster must have its own ports, code base and configuration files. In the case of using
+'tempauth' (default auth system for Swift), each cluster must be given its own
 memcached instance. Each cluster should also have some indicator to use for syslog
 entries so that individual log messages can be associated with a specific cluster.
 
@@ -32,16 +32,16 @@ The work on this idea was carried at the beginning of the Newton release cycle.
 Who
 ---
 This approach would likely be of interest to enterprises that are:
-(a) deploying small to medium size Swift clusters
-(b) highly sensitive to deployment costs (server hardware, per OS chargebacks)
-(c) requiring some separation between different business units or departments
+- deploying small to medium size Swift clusters
+- highly sensitive to deployment costs (server hardware, per OS chargebacks)
+- requiring some separation between different business units or departments
 
 Alternatives
 ------------
-(a) dedicated hardware deployments for each cluster
-(b) virtualized servers running on common cluster hardware (separate OS instances)
-(c) Docker/LXC containers per cluster running on shared host/parent
-(d) multi-tenancy within Swift
+- dedicated hardware deployments for each cluster
+- virtualized servers running on common cluster hardware (separate OS instances)
+- Docker/LXC containers per cluster running on shared host/parent
+- multi-tenancy within Swift etc.
 
 Example
 -------
@@ -98,7 +98,7 @@ These scripts as targeted and tested for Ubuntu 14.04
 4. sudo ./make_openrc.sh
 ```
 
-At this point, multiple Swift clusters are installed. To get started using multiple instances,
+At this point, multiple Swift clusters are installed. To get started using multiple instances, execute the following:
 
 ```bash
 1. sudo su swift-<dept>

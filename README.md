@@ -55,46 +55,47 @@ legal or regulatory requirements
 - Set up 2 Swift clusters - a 'Marketing' Swift cluster and a 'Finance' Swift
 cluster
 - Each cluster gets their own disk drives for storing data
-	Marketing: /srv/swift-mkt-disk
-	Finance: /srv/swift-fin-disk
+    - Marketing: /srv/swift-mkt-disk
+    - Finance: /srv/swift-fin-disk
 - Swift Configuration files path
-    /etc/swift-mkt/swift.conf
-    /etc/swift-fin/swift.conf
+    - /etc/swift-mkt/swift.conf
+    - /etc/swift-fin/swift.conf
     ...
 - Proxy Ports
-    Marketting: 8180
-    Finance: 8280
+    - Marketting: 8180
+    - Finance: 8280
 - Storage Ports
-    Marketing: port ranges 61** - 61**
-    Finance: port ranges 62** - 62**
+    - Marketing: port ranges 61** - 61**
+    - Finance: port ranges 62** - 62**
 - Memcached
-    Marketing memcached running on port 11212
-    Finance memcached running on port 11213
+    - Marketing memcached running on port 11212
+    - Finance memcached running on port 11213
 - Run Directory
-    Marketing: /var/run/swift-mkt
-    Finance: /var/run/swift-fin
+    - Marketing: /var/run/swift-mkt
+    - Finance: /var/run/swift-fin
 - Cache Directory
-    Marketing: /var/cache/swift-mkt*
-    Finance: /var/cache/swift-fin*
+    - Marketing: /var/cache/swift-mkt*
+    - Finance: /var/cache/swift-fin*
 - Logs
-    Marketing: /var/log/swift-mkt
-    Finance: /var/log/swift-fin
+    - Marketing: /var/log/swift-mkt
+    - Finance: /var/log/swift-fin
+
 Installation Process
 -------------------
 This project includes set of bash scripts with comments inline to install Swift All in One. This setup mimics the layout of [SAIO - Swift All In One](http://docs.openstack.org/developer/swift/development_saio.html)
 
-This project has custom code that enables passing the swift configuration directory as an environment variable "SWIFT_ROOT" that is set using the openrc file. Similarly, swift run dir "SWIFT_RUN_DIR" is set.
-These changes enable us to have two separately cloned Swift repos with separate python Swift clients configured to run on shared hardware.
+- This project has custom code that enables passing the swift configuration directory as an environment variable "SWIFT_ROOT" that is set using the openrc file. Similarly, swift run dir "SWIFT_RUN_DIR" is set.
+- These changes enable us to have two separately cloned Swift repos with separate python Swift clients configured to run on shared hardware.
 
 These scripts as targeted and tested for Ubuntu 14.04
 
 ##Order of execution:
 
 ```bash
-sudo ./sys_swift_check_users.sh
-sudo ./sys_swift_install_deps.sh
-sudo ./sys_swift_setup.sh
-sudo ./make_openrc.sh
+1. sudo ./sys_swift_check_users.sh
+2. sudo ./sys_swift_install_deps.sh
+3. sudo ./sys_swift_setup.sh
+4. sudo ./make_openrc.sh
 ```
 
 At this point, multiple Swift clusters are installed. To get started using multiple instances,

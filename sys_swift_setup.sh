@@ -1,7 +1,6 @@
 #!/bin/bash
 
-#Author: Paul Dardeau <paul.dardeau@intel.com>
-#        Nandini Tata <nandini.tata@intel.com>
+#Author:    Nandini Tata <nandini.tata@intel.com>
 # Copyright (c) 2016 Intel Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,11 +23,11 @@
 
 
 #*************General Information*************
-# 1) /var/log/swift-<dept_name> - /etc/rsyslog.d/10-swift.conf is the log file that enables rsyslog to write logs to /var/log/swift
+# 1) /var/log/swift-<dept_name> - /etc/rsyslog.d/10-swift.conf is the log file that enables rsyslog to write logs to /var/log/swift_<dept-name>
 # 2) /var/cache/swift-<dept_name> - swift-recon dumps stats in the cache directory dedicated to each storage node
-# 3) /var/run/swift-<dept_name> - swift processes's pids are stored in /var/run/swift. 
+# 3) /var/run/swift-<dept_name> - swift processes's pids are stored in /var/run/swift-<dept_name> 
 # 4) /tmp/log/swift-<dept_name> - a temporary directory used by some unit tests to run the profiler
-# 5) memcached server per department and a corresponding memcache client. Memcache service stores user credentials along with the tokens. It is important to ensure its running before starting the swift services
+# 5) memcached server per department and a corresponding memcache client. Memcache service stores user credentials along with the tokens. It is important to ensure it's running before starting the swift services
 # 6) This setup mimics the web solution  - 4 devices carved out 1 GB swift-disk and mounted as 4 loopback devices at /mnt/swift-<dept_name>
 #***************************************
 
@@ -51,6 +50,8 @@ CLUSTER_COUNT=0
 # good idea to have backup of fstab before we modify it
 cp /etc/fstab /etc/fstab.insert.bak
 
+#loop over the number of clusters to setup
+#TODO rsyslog facilities distribution for more than two swift clusters
 for i in `more clusters.txt`; do
   
    CLUSTER_COUNT=$(expr ${CLUSTER_COUNT} + 1)
@@ -172,8 +173,6 @@ EOF
 
    #updating rsyslog parameters in its config
    #Here, we configure all the simulated storage nodes to log to one facility
-   #sed -i 's/^\(#\)\(local\.\*.*\)/\2/g' ${SWIFT_CONFIG_DIR}/swift-rsyslog.conf 
-   #sed -i "s/\/var\/log\/swift/\/var\/log\/${SWIFT_USER}/g" ${SWIFT_CONFIG_DIR}/swift-rsyslog.conf
    if [[ ${CLUSTER_COUNT} -eq 1 ]]; then
        cp ${SWIFT_REPO_DIR}/doc/saio/rsyslog.d/10-swift.conf /etc/rsyslog.d/10-swift.conf
        sed -i 's/^\(#\)\(local1,local2.*\)/echo "\2"/ge' /etc/rsyslog.d/10-swift.conf

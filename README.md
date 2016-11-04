@@ -86,7 +86,7 @@ This project includes set of bash scripts with comments inline to install Swift 
 
 - This project has custom code that enables passing the swift configuration directory as an environment variable "SWIFT_ROOT" that is set using the openrc file. Similarly, swift run dir "SWIFT_RUN_DIR" is set.
 - Scripts such as "remakerings" and "resetswift" have been modified to suit the installation style
-- openrc file contains the crutial information to export into the environment before starting Swift clusters
+- openrc file contains crutial information to export into the environment before starting Swift services
 - These changes enable us to have two separately cloned Swift repos with separate python-swiftclients configured to run on shared hardware
 
 These scripts as targeted and tested for Ubuntu 14.04

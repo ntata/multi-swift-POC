@@ -49,7 +49,7 @@ Example
 advertising campaigns
 - Finance department needs to store scanned images of invoices, receipts,
 contracts, etc.
-- Suppose accounting department files must be stored in separate cluster due to
+- Suppose marketing department files must be stored in separate cluster due to
 legal or regulatory requirements
 - 1 set of servers for shared infrastructure
 - Set up 2 Swift clusters - a 'Marketing' Swift cluster and a 'Finance' Swift
@@ -62,7 +62,7 @@ cluster
     - /etc/swift-fin/swift.conf
     ...
 - Proxy Ports
-    - Marketting: 8180
+    - Marketing: 8180
     - Finance: 8280
 - Storage Ports
     - Marketing: port ranges 61** - 61**
@@ -85,7 +85,9 @@ Installation Process
 This project includes set of bash scripts with comments inline to install Swift All in One. This setup mimics the layout of [SAIO - Swift All In One](http://docs.openstack.org/developer/swift/development_saio.html)
 
 - This project has custom code that enables passing the swift configuration directory as an environment variable "SWIFT_ROOT" that is set using the openrc file. Similarly, swift run dir "SWIFT_RUN_DIR" is set.
-- These changes enable us to have two separately cloned Swift repos with separate python Swift clients configured to run on shared hardware.
+- Scripts such as "remakerings" and "resetswift" have been modified to suit the installation style
+- openrc file contains the crutial information to export into the environment before starting Swift clusters
+- These changes enable us to have two separately cloned Swift repos with separate python-swiftclients configured to run on shared hardware
 
 These scripts as targeted and tested for Ubuntu 14.04
 

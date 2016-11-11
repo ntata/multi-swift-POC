@@ -39,7 +39,7 @@ How
 ---
 Each cluster must have its own ports, code base and configuration files. In the case of using
 'tempauth' (default auth system for Swift), each cluster must be given its own
-memcached instance. Each cluster should also have some indicator to use for syslog
+memcached server. Each cluster should also have some indicator to use for syslog
 entries so that individual log messages can be associated with a specific cluster.
 
 Assumptions/Limitations
@@ -66,7 +66,6 @@ cluster
 - Swift Configuration files path
     - /etc/swift-mkt/swift.conf
     - /etc/swift-fin/swift.conf
-    ...
 - Proxy Ports
     - Marketing: 8180
     - Finance: 8280
@@ -91,14 +90,15 @@ Installation Overview
 This project includes set of bash scripts with inline comments to install Multi-Swift. 
 This setup mimics the layout of [SAIO - Swift All In One](http://docs.openstack.org/developer/swift/development_saio.html)
 
-- The swift configuration directory must be specified using environment variable SWIFT_ROOT.
-- Similarly, swift run directory must be set using SWIFT_RUN_DIR.
+- The swift configuration directory must be specified using environment variable SWIFT_ROOT (exported in openrc).
+
+- Similarly, swift run directory must be set using SWIFT_RUN_DIR (exported in openrc).
+
 - openrc file contains crucial information regarding environment variables that need
 to be exported into the environment before starting Swift services
+
 - These changes enable two separately cloned Swift repos with 
 separate python-swiftclients configured to run on shared hardware
-
-NOTE: These scripts are targeted and tested for Ubuntu 14.04
 
 - The "clusters.txt" file specifies the identifiers associated with each Swift cluster. 
 These identifiers are important to distinguish one cluster from the other. In the example,
@@ -115,6 +115,8 @@ variables specific to their respective profiles. These openrc files are created
 in their home directory (e.g. /home/swift-mkt/openrc).
 
 - start_swift and stop_swift scripts are copied into each users' (i.e. swift-mkt) home directory.
+
+NOTE: These scripts are targeted and tested for Ubuntu 14.04
 
 ##Order of execution:
 

@@ -97,9 +97,6 @@ This setup mimics the layout of [SAIO - Swift All In One](http://docs.openstack.
 - openrc file contains crucial information regarding environment variables that need
 to be exported into the environment before starting Swift services
 
-- These changes enable two separately cloned Swift repos with 
-separate python-swiftclients configured to run on shared hardware
-
 - The "clusters.txt" file specifies the identifiers associated with each Swift cluster. 
 These identifiers are important to distinguish one cluster from the other. In the example,
 they are "mkt" (Marketing) and "fin" (Finance).
